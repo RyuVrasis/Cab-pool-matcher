@@ -1,0 +1,7 @@
+[
+    {"driver":"XYZA","seats":3,"destination":"Delhi","time":"Morning"} ,
+    {"driver":"XYZB","seats":4,"destination":"Jaipur","time":"Evening"},
+    {"driver":"XYZC","seats":1,"destination":"Delhi","time":"Afternoon"},
+    {"driver":"XYZD","seats":3,"destination":"Jaipur","time":"Night"},
+    {"driver":"XYZE","seats":2,"destination":"Jaipur","time":"Afternoon"}
+]
