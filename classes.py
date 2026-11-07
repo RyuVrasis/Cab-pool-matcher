@@ -21,5 +21,8 @@ class Cab:
         self.has_left = False
         self.student_list = []
 
+    def free_seats(self):
+        return self.seat_num - len(self.student_list())
+
     def __str__(self):
         return f"driver {self.driver_name},cab having seat {len(self.student_list)}/{self.seat_num}  to {self.destination} at {self.dep_time};has left {self.has_left}"
