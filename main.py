@@ -1,4 +1,22 @@
+import json
 from classes import RideRequest, Cab
+
+def load_cabs(filename):
+    cabs = []
+    try:
+        with open(filename) as f:
+            data = json.load(f)
+        for item in data:
+            cab = Cab(item["driver"],item["seats"],item["destination"],item["time"])
+            cabs.append(cab)
+    except FileNotFoundError:
+        print(f"Could not find {filename}.Starting with no cabs")
+    return cabs
+
+cabs = load_cabs("cabs.json")      
+
+for cab in cabs:
+    print(cab)
 
 waiting_list = []
 request_counter = 0
@@ -58,7 +76,7 @@ while True:
             except ValueError:
                 print("Please enter a number")
 
-        request_counter = + 1
+        request_counter += 1
         request = RideRequest(name, city, time, year, request_counter)
         waiting_list.append(request)
         print("Added:", request)
