@@ -4,11 +4,11 @@ from classes import RideRequest, Cab
 def load_cabs(filename):
     cabs = []
     try:
-        with open(filename) as f:
-            data = json.load(f)
+        data = json.load(open(filename))
         for item in data:
             cab = Cab(item["driver"],item["seats"],item["destination"],item["time"])
             cabs.append(cab)
+      
     except FileNotFoundError:
         print(f"Could not find {filename}.Starting with no cabs")
     return cabs
@@ -18,7 +18,7 @@ cabs = load_cabs("cabs.json")
 for cab in cabs:
     print(cab)
 
-waiting_list = []
+waiting = {}
 request_counter = 0
 
 while True:
@@ -39,7 +39,7 @@ while True:
                 break
 
         while True:
-            print("enter city number 1.Delhi 2. Jaipur")
+            print("enter city number 1.Delhi 2. Jaipur")    
             destination = input("city num:").strip()
             if destination == "1":
                 city = "delhi"
@@ -78,16 +78,21 @@ while True:
 
         request_counter += 1
         request = RideRequest(name, city, time, year, request_counter)
-        waiting_list.append(request)
+        key = (city,time)
+        if key not in waiting:
+            waiting[key] = []
+        waiting[key].append(request)
         print("Added:", request)
 
     elif choice == "2":
-        if len(waiting_list) == 0:
-            print("Nobody is waiting")
-        else:
-            print("Waiting students:")
-            for request in waiting_list:
-                print(" ", request)
+        print("waiting students:")
+        anyone_waiting = False
+        for key in waiting:
+            for request in waiting[key]:
+                print("",request)
+                anyone_waiting = True
+        if not anyone_waiting:
+            print("nobody is waiting")   
 
     elif choice == "3":
         print("see you soon")

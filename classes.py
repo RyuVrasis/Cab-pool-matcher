@@ -8,7 +8,7 @@ class RideRequest:
         self.request_num = request_num
 
     def __str__(self):
-        return f"{self.request_num},{self.name} year {self.year} going to {self.city} at {self.time} "
+        return f"#{self.request_num},{self.name} year {self.year} going to {self.city} at {self.time} "
 
 
 class Cab:
@@ -22,7 +22,8 @@ class Cab:
         self.student_list = []
 
     def free_seats(self):
-        return self.seat_num - len(self.student_list())
+        return self.seat_num - len(self.student_list)
+
 
     def __str__(self):
         return f"driver {self.driver_name},cab having seat {len(self.student_list)}/{self.seat_num}  to {self.destination} at {self.dep_time};has left {self.has_left}"
