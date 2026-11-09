@@ -1,3 +1,4 @@
+import heapq
 import json
 from classes import RideRequest, Cab
 
@@ -23,8 +24,8 @@ request_counter = 0
 
 while True:
     print("\n1.Add a new ride request.")
-    print("2.See everyone who is still waiting.")
-    print("3.Find matches")
+    print("2.See everyone who is still waiting for their goddamn cab.")
+    print("3.Find your perfect matches(cab ofcourse)")
     print("4.Dispatch Cabs")
     print("5.Quit the app")
 
@@ -34,9 +35,9 @@ while True:
         while True:
             name = input("Name: ").strip()
             if name == "":
-                print("Name can't be empty")
+                print("Name can't be empty son")
             elif not name.replace(" ", "").isalpha():
-                print("Name should contain only letters and spaces")
+                print("Sonion ring,Name should contain only letters and spaces")
             else:
                 break
 
@@ -50,7 +51,7 @@ while True:
                 city = "Jaipur"
                 break
             else:
-                print("please enter either 1 or 2")
+                print("enter either 1 or 2 son")
 
         while True:
             print("choose the time zone : 1. morning 2. afternoon 3.evening 4.night")
@@ -68,7 +69,7 @@ while True:
                 time = "Night"
                 break
             else:
-                print("please enter either 1,2,3 or 4")
+                print("goddamn enter smth between 1-4")
         while True:
             try:
                 year = int(input("Year (1-5): ").strip())
@@ -83,19 +84,19 @@ while True:
         key = (request.city,request.time)
         if key not in waiting:
             waiting[key] = []
-        waiting[key].append(request)
+        heapq.heappush(waiting[key],(-request.year,request.request_num,request))
         print("Added:", request)
 
     elif choice == "2":
         print("waiting students:")
         anyone_waiting = False
         for key in waiting:
-            for request in waiting[key]:
-                print("",request)
+            for item in sorted(waiting[key]):
+                print("",item[2])
                 anyone_waiting = True
         if not anyone_waiting:
             print("nobody is waiting") 
-
+    #find matches
     elif choice =="3":  
         for cab in cabs:
             if cab.has_left == True:
@@ -103,7 +104,7 @@ while True:
             elif cab.has_left == False:
                 trip_key = (cab.destination,cab.dep_time)
                 trip_list = waiting.get(trip_key,[])
-                queue = trip_list[:cab.free_seats()]
+                queue = heapq.nsmallest(cab.free_seats(),trip_list)
                 print(cab)
                 if len(queue) == 0:
                     print("nobody is wating for the trip")
@@ -111,7 +112,7 @@ while True:
                     for request in queue:
                         print(" -->",request)
 
-                    
+    #dispatching students               
     elif choice =="4":
         open_cabs = []
         for cab in cabs:
@@ -138,9 +139,11 @@ while True:
             break
         trip_key = (chosen.destination,chosen.dep_time)
         trip_list = waiting.get(trip_key,[])
-        queue = trip_list[:chosen.free_seats()]
-
-        waiting[trip_key] = trip_list[chosen.free_seats():]
+        seats = chosen.free_seats()
+        queue = []
+        while len(queue) < seats and len(trip_list)> 0:
+            item = heapq.heappop(trip_list)
+            queue.append(item[2])
         chosen.student_list.extend(queue)
         chosen.has_left = True
         print(f"{chosen.driver_name} has left with {len(queue)} passengers")
@@ -148,7 +151,7 @@ while True:
             print(f"-->{item}")                         
 
     elif choice == "5":
-        print("see you soon")
+        print("bye-bye.Be sure to rate ts broskii.Any feedback is much appreciated.")
         break
     else:
-        print("please enter 1,2,3,4 or 5")
+        print("enter 1,2,3,4 or 5 boii")
