@@ -14,18 +14,14 @@ def load_cabs(filename):
         print(f"Could not find {filename}.Starting with no cabs")
     return cabs
 
-cabs = load_cabs("cabs.json")      
-
-for cab in cabs:
-    print(cab)
-
+cabs = load_cabs("cabs.json")  
 waiting = {}
 request_counter = 0
 
 while True:
     print("\n1.Add a new ride request.")
-    print("2.See everyone who is still waiting for their goddamn cab.")
-    print("3.Find your perfect matches(cab ofcourse)")
+    print("2.See everyone who is still waiting for their cab.")
+    print("3.Find your perfect match ( in cabs ofcourse)")
     print("4.Dispatch Cabs")
     print("5.Quit the app")
 
@@ -86,6 +82,13 @@ while True:
             waiting[key] = []
         heapq.heappush(waiting[key],(-request.year,request.request_num,request))
         print("Added:", request)
+        open_cab_found = False
+        for cab in cabs:
+            if cab.destination == request.city and cab.dep_time == request.time and not cab.has_left:
+                open_cab_found= True
+        if not open_cab_found:
+            print("Tough luck gng,No open cab for this trip right now.You have been placed in the waiting list for now lol")  
+
 
     elif choice == "2":
         print("waiting students:")
@@ -96,6 +99,10 @@ while True:
                 anyone_waiting = True
         if not anyone_waiting:
             print("nobody is waiting") 
+        print("Cabs:")
+        for cab in cabs:
+            print("",cab)
+
     #find matches
     elif choice =="3":  
         for cab in cabs:
@@ -146,7 +153,7 @@ while True:
             queue.append(item[2])
         chosen.student_list.extend(queue)
         chosen.has_left = True
-        print(f"{chosen.driver_name} has left with {len(queue)} passengers")
+        print(f"Cab driver {chosen.driver_name} has left with {len(queue)} passengers")
         for item in queue:
             print(f"-->{item}")                         
 
