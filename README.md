@@ -7,17 +7,18 @@ An app in Python that matches BITSians to shared cabs going to Delhi or Jaipur. 
 Requirements to run : Python 3 installed
 
 ```
-python main.py 
+python main.py
+```
 
-Execute this command in your terminal after pulling from github to the project folder, so the app can find 'cabs.json'.
+Execute this command in your terminal after pulling from github to the project folder, so the app can find `cabs.json`.
 
 ## Files
 
 |Files used|What it contains|
 |-|-|
-|'main.py'|The menu and all app logic|
-|'classes.py'|The 'RideRequest' and 'Cab' classes|
-|'cabs.json'|The list of available cabs, loaded when the app starts|
+|`main.py`|The menu and all app logic|
+|`classes.py`|The `RideRequest` and `Cab` classes|
+|`cabs.json`|The list of available cabs, loaded when the app starts|
 
 ## Menu
 
@@ -37,13 +38,15 @@ Execute this command in your terminal after pulling from github to the project f
 ## The cab file
 
 Cabs are loaded from `cabs.json` when the app starts. It is a list with one entry per cab:
-\[
+```json
+[
     {"driver": "XYZA", "seats": 3, "destination": "Delhi", "time": "Morning"},
     {"driver": "XYZB", "seats": 4, "destination": "Jaipur", "time": "Evening"},
     {"driver": "XYZC", "seats": 1, "destination": "Delhi", "time": "Afternoon"},
     {"driver": "XYZD", "seats": 3, "destination": "Jaipur", "time": "Night"},
     {"driver": "XYZE", "seats": 2, "destination": "Jaipur", "time": "Afternoon"}
 ]
+```
 
 
 |Key|Meaning|Allowed values|
@@ -53,7 +56,7 @@ Cabs are loaded from `cabs.json` when the app starts. It is a list with one entr
 |`destination`|Where the cab goes|"Delhi" or "Jaipur"|
 |`time`|When it leaves|"Morning", "Afternoon", "Evening" or "Night"|
 
-The values that are being  inputted are case  sensitive. If 'cabs.json' is missing, the app prints a message and starts with no cabs instead of crashing.
+The values that are being  inputted are case  sensitive. If `cabs.json` is missing, the app prints a message and starts with no cabs instead of crashing.
 
 Each cab always starts as not left, with no passengers, so those are set inside the `Cab` class and are not part of the file.
 
@@ -61,41 +64,45 @@ Each cab always starts as not left, with no passengers, so those are set inside 
 
 **One priority queue per trip. -**  Waiting students are stored in a dictionary. The key is the trip, for example `("Delhi", "Morning")`, and the value is a heap (priority queue) of the students waiting for that trip. The queue belongs to the trip, not to any one cab. A cab's passenger list is a normal list.
 
-**Seniors first.** Python's 'heapq' is a min-heap, so it always gives the smallest item first. Each student is pushed as a tuple:
+**Seniors first.** Python's `heapq` is a min-heap, so it always gives the smallest item first. Each student is pushed as a tuple:
 
-python (-year, request\_number, request)
+```python
+(-year, request_number, request)
+```
 
 
-* '-year' puts the highest year first: a 5th year is stored as -5, which is smaller than -1 for a 1st year.
-* 'request\_number' breaks ties between students in the same year (explained below).
-* 'request' is the actual 'RideRequest' object, used when printing or boarding.
+* `-year` puts the highest year first: a 5th year is stored as -5, which is smaller than -1 for a 1st year.
+* `request_number` breaks ties between students in the same year (explained below).
+* `request` is the actual `RideRequest` object, used when printing or boarding.
 
-**Find Matches and Dispatch agree.** Find Matches uses 'heapq.nsmallest', which shows the students who would come out first without removing them. Dispatch uses 'heapq.heappop', which removes them in the same order. So the preview always shows exactly who Dispatch would take.
+**Find Matches and Dispatch agree.** Find Matches uses `heapq.nsmallest`, which shows the students who would come out first without removing them. Dispatch uses `heapq.heappop`, which removes them in the same order. So the preview always shows exactly who Dispatch would take.
 
-**Fixed order.** Cabs are always checked in the order they appear in 'cabs.json', so the app gives the same result every time.
+**Fixed order.** Cabs are always checked in the order they appear in `cabs.json`, so the app gives the same result every time.
 
 ## Tricky situations
 
-### 1\. Half-empty cab
+### 1. Half-empty cab
 
-A cab can leave with fewer students than its seats. Dispatch takes as many students as are waiting for that trip, up to the free seats, and stops when either the cab is full or nobody is left. The cab then shows, for example, '1/4' and "has left". It can't take anyone else after it leaves, because only cabs that haven't left are ever offered for matching or dispatch.
+A cab can leave with fewer students than its seats. Dispatch takes as many students as are waiting for that trip, up to the free seats, and stops when either the cab is full or nobody is left. The cab then shows, for example, `1/4` and "has left". It can't take anyone else after it leaves, because only cabs that haven't left are ever offered for matching or dispatch.
 
-### 2\. No cabs left
+### 2. No cabs left
 
 Students are never lost. A new request is always added to its trip's waiting list, whether or not a cab is available. If no open cab exists for that trip (all have left, or there never was one), the student sees:
-"No open cab for this trip right now. You will stay in the waiting list."
+```
+No open cab for this trip right now. You will stay in the waiting list.
+```
 
 They stay visible in "See everyone waiting". If every cab has left, Dispatch shows "No cabs available" and changes nothing.
 
-### 3\. Same year
+### 3. Same year
 
 Every request gets a request number from a counter that only goes up (1, 2, 3 ...) and never resets. A lower number means the student asked earlier. This number is the second item in the heap tuple, so when two students have the same year, the one with the lower number comes out first.
 
-This also stops a crash. Python compares tuples item by item, and comparing two 'RideRequest' objects directly would raise a `TypeError`. Because no two requests share a request number, the comparison is always decided by the first two items and never reaches the objects.
+This also stops a crash. Python compares tuples item by item, and comparing two `RideRequest` objects directly would raise a `TypeError`. Because no two requests share a request number, the comparison is always decided by the first two items and never reaches the objects.
 
-### 4\. Lots of students (1,000 waiting)
+### 4. Lots of students (1,000 waiting)
 
-Here 'n' is the number of students waiting for a trip and 'C' is the number of cabs.
+Here `n` is the number of students waiting for a trip and `C` is the number of cabs.
 
 |Operation|Big-O|Why|
 |-|-|-|
